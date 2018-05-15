@@ -143,6 +143,7 @@ import android.media.AudioManagerInternal;
 import android.media.AudioSystem;
 import android.media.IAudioService;
 import android.media.session.MediaSessionLegacyHelper;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.FactoryTest;
@@ -171,6 +172,7 @@ import android.service.dreams.IDreamManager;
 import android.service.vr.IPersistentVrStateCallbacks;
 import android.speech.RecognizerIntent;
 import android.telecom.TelecomManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.MutableBoolean;
@@ -395,6 +397,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private DisplayFoldController mDisplayFoldController;
     AppOpsManager mAppOpsManager;
     private boolean mHasFeatureAuto;
+    AlertSliderObserver mAlertSliderObserver;
     private boolean mHasFeatureWatch;
     private boolean mHasFeatureLeanback;
     private boolean mHasFeatureHdmiCec;
@@ -666,6 +669,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private SwipeToScreenshotListener mSwipeToScreenshot;
 
+    private boolean mHasAlertSlider = false;
+
     private class PolicyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -778,6 +783,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     };
 
     class SettingsObserver extends ContentObserver {
+        private final Uri SWAP_ALERT_SLIDER_ORDER_URI =
+                Settings.System.getUriFor(Settings.System.ALERT_SLIDER_ORDER);
+
         SettingsObserver(Handler handler) {
             super(handler);
         }
@@ -823,13 +831,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.VOLBTN_MUSIC_CONTROLS), false, this,
+                    Settings.System.ALERT_SLIDER_ORDER), false, this,
                     UserHandle.USER_ALL);
             updateSettings();
         }
 
-        @Override public void onChange(boolean selfChange) {
-            updateSettings();
-            updateRotation(false);
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (SWAP_ALERT_SLIDER_ORDER_URI.equals(uri)
+                    && mSystemReady && mAlertSliderObserver != null) {
+                mAlertSliderObserver.update();
+            } else {
+                updateSettings();
+                updateRotation(false);
+            }
         }
     }
 
@@ -1830,6 +1845,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mAccessibilityShortcutController =
                 new AccessibilityShortcutController(mContext, new Handler(), mCurrentUserId);
         mLogger = new MetricsLogger();
+
+        // Init alert slider
+        mHasAlertSlider = mContext.getResources().getBoolean(R.bool.config_hasAlertSlider)
+                && !TextUtils.isEmpty(mContext.getResources().getString(R.string.alert_slider_state_path))
+                && !TextUtils.isEmpty(mContext.getResources().getString(R.string.alert_slider_uevent_match_path));
         // Init display burn-in protection
         boolean burnInProtectionEnabled = context.getResources().getBoolean(
                 com.android.internal.R.bool.config_enableBurnInProtection);
@@ -5054,6 +5074,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mVrManagerInternal = LocalServices.getService(VrManagerInternal.class);
         if (mVrManagerInternal != null) {
             mVrManagerInternal.addPersistentVrModeStateListener(mPersistentVrModeListener);
+        }
+
+        if (mHasAlertSlider) {
+            mAlertSliderObserver = new AlertSliderObserver(mContext);
+            mAlertSliderObserver.startObserving(com.android.internal.R.string.alert_slider_uevent_match_path);
         }
 
         readCameraLensCoverState();
