@@ -335,7 +335,7 @@
     <dimen name="qs_header_system_icons_area_height">48dp</dimen>
 
     <!-- How far the quick-quick settings panel extends below the status bar -->
-    <dimen name="qs_quick_header_panel_height">140dp</dimen>
+    <dimen name="qs_quick_header_panel_height">156dp</dimen>
 
     <!-- The height of the container that holds the system icons in the quick settings header in the
          car setting. -->
@@ -343,7 +343,7 @@
 
     <!-- The height of the quick settings footer that holds the user switcher, settings icon,
          etc. -->
-    <dimen name="qs_footer_height">48dp</dimen>
+    <dimen name="qs_footer_height">38dp</dimen>
 
     <!-- The size of each of the icon buttons in the QS footer -->
     <dimen name="qs_footer_action_button_size">@dimen/qs_footer_height</dimen>
@@ -680,7 +680,7 @@
     <dimen name="multi_user_avatar_keyguard_size">22dp</dimen>
 
     <!-- The width of user avatar when expanded -->
-    <dimen name="multi_user_avatar_expanded_size">24dp</dimen>
+    <dimen name="multi_user_avatar_expanded_size">20dp</dimen>
 
     <!-- The font size of the time when collapsed in QS -->
     <dimen name="qs_time_collapsed_size">14sp</dimen>
