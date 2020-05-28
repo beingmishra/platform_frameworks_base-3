@@ -187,6 +187,7 @@ public class VolumeDialogImpl implements VolumeDialog,
 
     private boolean mLeftVolumeRocker;
 
+    private boolean mHasAlertSlider;
     private boolean mDarkMode;
     private boolean mVibrateOnSlider;
 
@@ -211,6 +212,8 @@ public class VolumeDialogImpl implements VolumeDialog,
         mHasSeenODICaptionsTooltip =
                 Prefs.getBoolean(context, Prefs.Key.HAS_SEEN_ODI_CAPTIONS_TOOLTIP, false);
         mLeftVolumeRocker = mContext.getResources().getBoolean(R.bool.config_audioPanelOnLeftSide);
+        mHasAlertSlider = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasAlertSlider);
         mVibrateOnSlider = mContext.getResources().getBoolean(R.bool.config_vibrateOnIconAnimation);
         mElevation = mContext.getResources().getDimension(R.dimen.volume_dialog_elevation);
         mSpacer = mContext.getResources().getDimension(R.dimen.volume_dialog_row_spacer);
