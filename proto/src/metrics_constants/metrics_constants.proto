@@ -7438,5 +7438,8 @@ message MetricsEvent {
     PANEL_ZEN_MODE = 2004;
     // 404
     ERROR = 5000;
+
+    //DevilianOS Metrics Constants
+    DEVILIAN = 6000;
   }
 }
