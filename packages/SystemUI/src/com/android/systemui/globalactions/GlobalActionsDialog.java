@@ -1297,7 +1297,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
         }
 
         protected int getActionLayoutId(Context context) {
-            return com.android.systemui.R.layout.global_actions_grid_item;
+            return com.android.systemui.R.layout.global_actions_column;
         }
 
         public View create(
